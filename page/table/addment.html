@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加购物账单 - layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+        .layuimini-form .layui-form-item .tip {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+        .product-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #eee;
+        }
+        .add-product-btn {
+            color: #1E9FFF;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .add-product-btn:hover {
+            color: #009688;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <!-- 购物账单基本信息 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账单名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="billName" lay-verify="required" lay-reqtext="账单名称不能为空" 
+                   placeholder="例如：2024年9月超市采购/京东家电购买" value="" class="layui-input">
+            <span class="tip">填写本次购物的核心标识</span>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">商家名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="merchant" lay-verify="required" lay-reqtext="商家名称不能为空" 
+                   placeholder="例如：沃尔玛超市/淘宝官方旗舰店" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">购物日期</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" id="shoppingDate" name="shoppingDate" 
+                   lay-verify="required" lay-reqtext="购物日期不能为空" placeholder="选择购物发生日期">
+        </div>
+    </div>
+
+    <!-- 商品列表区域 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">商品信息</label>
+        <div class="layui-input-block" id="productList">
+            <!-- 商品项1 -->
+            <div class="product-item">
+                <div class="layui-form-item">
+                    <div class="layui-col-md4">
+                        <input type="text" name="productName[]" lay-verify="required" placeholder="商品名称" class="layui-input">
+                    </div>
+                    <div class="layui-col-md2">
+                        <input type="number" name="productNum[]" lay-verify="required|number" min="1" value="1" placeholder="数量" class="layui-input">
+                    </div>
+                    <div class="layui-col-md3">
+                        <input type="number" name="productPrice[]" lay-verify="required|number" min="0.01" step="0.01" placeholder="单价(元)" class="layui-input">
+                    </div>
+                    <div class="layui-col-md2 layui-col-offset1">
+                        <select name="productCategory[]" lay-verify="required">
+                            <option value="">类别</option>
+                            <option value="food">食品</option>
+                            <option value="clothes">服装</option>
+                            <option value="electronics">电子产品</option>
+                            <option value="daily">日用品</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-input-block" style="margin-top: 10px;">
+            <span class="add-product-btn" onclick="addProductItem()"><i class="layui-icon layui-icon-add-circle"></i> 添加更多商品</span>
+        </div>
+    </div>
+
+    <!-- 支付信息 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">支付方式</label>
+        <div class="layui-input-block">
+            <select name="payMethod" lay-verify="required" lay-reqtext="支付方式不能为空">
+                <option value="">请选择支付方式</option>
+                <option value="wechat">微信支付</option>
+                <option value="alipay">支付宝</option>
+                <option value="card">银行卡</option>
+                <option value="cash">现金</option>
+                <option value="credit">信用卡</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">优惠券/折扣</label>
+        <div class="layui-input-block">
+            <input type="number" name="discount" min="0" step="0.01" placeholder="优惠金额(元)" value="0" class="layui-input">
+        </div>
+    </div>
+
+    <!-- 备注信息 -->
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea name="remark" class="layui-textarea" placeholder="例如：超市周末促销/会员享9折优惠/支持7天无理由退货"></textarea>
+        </div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBillBtn">确认保存</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name))">取消</button>
+        </div>
+    </div>
+</div>
+
+<script src="../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            $ = layui.$;
+
+        // 初始化日期选择器（默认当前日期）
+        laydate.render({
+            elem: '#shoppingDate',
+            value: new Date(),
+            format: 'yyyy-MM-dd'
+        });
+
+        // 监听表单提交
+        form.on('submit(saveBillBtn)', function (data) {
+            // 计算总金额
+            let totalAmount = 0;
+            const prices = data.field.productPrice || [];
+            const nums = data.field.productNum || [];
+            
+            prices.forEach((price, index) => {
+                totalAmount += parseFloat(price) * parseInt(nums[index] || 1);
+            });
+            
+            // 减去优惠金额
+            totalAmount -= parseFloat(data.field.discount || 0);
+            totalAmount = totalAmount.toFixed(2);
+
+            // 显示提交信息（包含计算的总金额）
+            const submitData = {
+                ...data.field,
+                totalAmount: `${totalAmount}元`
+            };
+            
+            var index = layer.alert(JSON.stringify(submitData, null, 2), {
+                title: '购物账单信息确认',
+                area: ['600px', '400px']
+            }, function () {
+                layer.close(index);
+                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(iframeIndex);
+                // 实际应用中可添加刷新列表的逻辑
+                // parent.refreshBillList();
+            });
+
+            return false;
+        });
+    });
+
+    // 添加商品项
+    function addProductItem() {
+        const productList = document.getElementById('productList');
+        const newItem = document.createElement('div');
+        newItem.className = 'product-item';
+        newItem.innerHTML = `
+            <div class="layui-form-item">
+                <div class="layui-col-md4">
+                    <input type="text" name="productName[]" lay-verify="required" placeholder="商品名称" class="layui-input">
+                </div>
+                <div class="layui-col-md2">
+                    <input type="number" name="productNum[]" lay-verify="required|number" min="1" value="1" placeholder="数量" class="layui-input">
+                </div>
+                <div class="layui-col-md3">
+                    <input type="number" name="productPrice[]" lay-verify="required|number" min="0.01" step="0.01" placeholder="单价(元)" class="layui-input">
+                </div>
+                <div class="layui-col-md2 layui-col-offset1">
+                    <select name="productCategory[]" lay-verify="required">
+                        <option value="">类别</option>
+                        <option value="food">食品</option>
+                        <option value="clothes">服装</option>
+                        <option value="electronics">电子产品</option>
+                        <option value="daily">日用品</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                <div class="layui-col-md1">
+                    <span class="layui-btn layui-btn-danger layui-btn-xs" onclick="removeProductItem(this)">删除</span>
+                </div>
+            </div>
+        `;
+        productList.appendChild(newItem);
+        // 重新渲染表单元素
+        layui.use('form', function(form){
+            form.render();
+        });
+    }
+
+    // 删除商品项
+    function removeProductItem(elem) {
+        const item = elem.closest('.product-item');
+        item.remove();
+    }
+</script>
+</body>
+</html>

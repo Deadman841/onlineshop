@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>购物车管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        /* 购物车样式 */
+        .cart-container {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        .cart-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        .cart-header .col-select {
+            width: 60px;
+        }
+        .cart-header .col-goods {
+            flex: 1;
+        }
+        .cart-header .col-price {
+            width: 120px;
+            text-align: center;
+        }
+        .cart-header .col-quantity {
+            width: 180px;
+            text-align: center;
+        }
+        .cart-header .col-total {
+            width: 120px;
+            text-align: center;
+        }
+        .cart-header .col-action {
+            width: 100px;
+            text-align: center;
+        }
+        
+        .cart-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .cart-item:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .cart-item .col-select {
+            width: 60px;
+        }
+        .cart-item .col-goods {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        .cart-item .goods-img {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            margin-right: 15px;
+            overflow: hidden;
+        }
+        .cart-item .goods-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cart-item .goods-info {
+            flex: 1;
+        }
+        .goods-name {
+            margin-bottom: 5px;
+            line-height: 1.4;
+            max-height: 2.8em;
+            overflow: hidden;
+        }
+        .goods-attrs {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .cart-item .col-price {
+            width: 120px;
+            text-align: center;
+            color: #333;
+        }
+        
+        .cart-item .col-quantity {
+            width: 180px;
+            text-align: center;
+        }
+        .quantity-adjust {
+            display: inline-flex;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .quantity-btn:hover {
+            background-color: #eee;
+        }
+        .quantity-input {
+            width: 50px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+        
+        .cart-item .col-total {
+            width: 120px;
+            text-align: center;
+            color: #ff5722;
+            font-weight: bold;
+        }
+        
+        .cart-item .col-action {
+            width: 100px;
+            text-align: center;
+        }
+        .delete-btn {
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .delete-btn:hover {
+            color: #ff5722;
+        }
+        
+        .cart-footer {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+        .select-all {
+            display: flex;
+            align-items: center;
+        }
+        .select-all span {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        .batch-actions {
+            margin-left: 20px;
+        }
+        .batch-actions .delete-all {
+            color: #666;
+            cursor: pointer;
+        }
+        .batch-actions .delete-all:hover {
+            color: #ff5722;
+        }
+        
+        .cart-summary {
+            display: flex;
+            align-items: center;
+        }
+        .total-info {
+            text-align: right;
+            margin-right: 20px;
+        }
+        .total-text {
+            color: #666;
+        }
+        .total-price {
+            color: #ff5722;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .total-count {
+            font-size: 12px;
+            color: #999;
+        }
+        .checkout-btn {
+            width: 120px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: #ff5722;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .checkout-btn:hover {
+            background-color: #f43f30;
+        }
+        .checkout-btn.disabled {
+            background-color: #ffb8af;
+            cursor: not-allowed;
+        }
+        
+        /* 空购物车样式 */
+        .empty-cart {
+            text-align: center;
+            padding: 60px 0;
+        }
+        .empty-cart .icon {
+            font-size: 60px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+        .empty-cart .text {
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .empty-cart .go-shopping {
+            display: inline-block;
+            padding: 8px 20px;
+            background-color: #ff5722;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>我的购物车</legend>
+        </fieldset>
+        
+        <div class="cart-container">
+            <!-- 购物车头部 -->
+            <div class="cart-header">
+                <div class="col-select">
+                    <input type="checkbox" name="selectAll" lay-skin="primary" title="" id="selectAll">
+                </div>
+                <div class="col-goods">商品信息</div>
+                <div class="col-price">单价(元)</div>
+                <div class="col-quantity">数量</div>
+                <div class="col-total">小计(元)</div>
+                <div class="col-action">操作</div>
+            </div>
+            
+            <!-- 购物车商品列表 -->
+            <div class="cart-list">
+                <!-- 商品1 -->
+                <div class="cart-item" data-id="1" data-price="299.00">
+                    <div class="col-select">
+                        <input type="checkbox" name="selectItem" lay-skin="primary" title="" class="select-item">
+                    </div>
+                    <div class="col-goods">
+                        <div class="goods-img">
+                            <img src="../img/4(1).jpg" alt="男士休闲运动鞋"/>
+                        </div>
+                        <div class="goods-info">
+                            <div class="goods-name">男士休闲运动鞋 轻便透气跑步鞋 黑色</div>
+                            <div class="goods-attrs">尺码: 42 | 颜色: 黑色</div>
+                        </div>
+                    </div>
+                    <div class="col-price">299.00</div>
+                    <div class="col-quantity">
+                        <div class="quantity-adjust">
+                            <div class="quantity-btn minus">-</div>
+                            <input type="text" class="quantity-input" value="1" min="1">
+                            <div class="quantity-btn plus">+</div>
+                        </div>
+                    </div>
+                    <div class="col-total">299.00</div>
+                    <div class="col-action">
+                        <div class="delete-btn" data-id="1"><i class="layui-icon"></i> 删除</div>
+                    </div>
+                </div>
+                
+                <!-- 商品2 -->
+                <div class="cart-item" data-id="2" data-price="129.00">
+                    <div class="col-select">
+                        <input type="checkbox" name="selectItem" lay-skin="primary" title="" class="select-item">
+                    </div>
+                    <div class="col-goods">
+                        <div class="goods-img">
+                            <img src="../img/6.jpg" alt="纯棉T恤">
+                        </div>
+                        <div class="goods-info">
+                            <div class="goods-name">纯棉T恤 短袖圆领宽松上衣 藏青色</div>
+                            <div class="goods-attrs">尺码: L | 颜色: 藏青色</div>
+                        </div>
+                    </div>
+                    <div class="col-price">129.00</div>
+                    <div class="col-quantity">
+                        <div class="quantity-adjust">
+                            <div class="quantity-btn minus">-</div>
+                            <input type="text" class="quantity-input" value="2" min="1">
+                            <div class="quantity-btn plus">+</div>
+                        </div>
+                    </div>
+                    <div class="col-total">258.00</div>
+                    <div class="col-action">
+                        <div class="delete-btn" data-id="2"><i class="layui-icon"></i> 删除</div>
+                    </div>
+                </div>
+                
+                <!-- 商品3 -->
+                <div class="cart-item" data-id="3" data-price="39.00">
+                    <div class="col-select">
+                        <input type="checkbox" name="selectItem" lay-skin="primary" title="" class="select-item">
+                    </div>
+                    <div class="col-goods">
+                        <div class="goods-img">
+                            <img src="../img/5.jpg" alt="毛绒玩具">
+                        </div>
+                        <div class="goods-info">
+                            <div class="goods-name">纯棉制作 棕色 中国制造</div>
+                            <div class="goods-attrs">适玩年龄: 3-15岁 | 类型: 小熊</div>
+                        </div>
+                    </div>
+                    <div class="col-price">39.00</div>
+                    <div class="col-quantity">
+                        <div class="quantity-adjust">
+                            <div class="quantity-btn minus">-</div>
+                            <input type="text" class="quantity-input" value="1" min="1">
+                            <div class="quantity-btn plus">+</div>
+                        </div>
+                    </div>
+                    <div class="col-total">39.00</div>
+                    <div class="col-action">
+                        <div class="delete-btn" data-id="3"><i class="layui-icon"></i> 删除</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 购物车底部 -->
+            <div class="cart-footer">
+                <div class="left-actions">
+                    <div class="select-all">
+                        <input type="checkbox" name="selectAllFooter" lay-skin="primary" title="" id="selectAllFooter">
+                        <span for="selectAllFooter">全选</span>
+                    </div>
+                    <div class="batch-actions">
+                        <span class="delete-all"><i class="layui-icon"></i> 删除选中商品</span>
+                    </div>
+                </div>
+                <div class="cart-summary">
+                    <div class="total-info">
+                        <div class="total-text">合计:</div>
+                        <div class="total-price">¥<span id="totalPrice">0.00</span></div>
+                        <div class="total-count">已选择 <span id="selectedCount">0</span> 件商品</div>
+                    </div>
+                    <div class="checkout-btn disabled" id="checkoutBtn">结算</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , $ = layui.jquery;
+        
+        // 初始化全选状态
+        form.render('checkbox');
+        
+        // 更新购物车总价和数量
+        function updateCartSummary() {
+            var totalPrice = 0;
+            var selectedCount = 0;
+            
+            // 遍历所有选中的商品
+            $('.cart-item:has(.select-item:checked)').each(function() {
+                var price = parseFloat($(this).data('price'));
+                var quantity = parseInt($(this).find('.quantity-input').val());
+                var itemTotal = price * quantity;
+                
+                totalPrice += itemTotal;
+                selectedCount += quantity;
+                
+                // 更新商品小计
+                $(this).find('.col-total').text(itemTotal.toFixed(2));
+            });
+            
+            // 更新总价和数量显示
+            $('#totalPrice').text(totalPrice.toFixed(2));
+            $('#selectedCount').text(selectedCount);
+            
+            // 更新结算按钮状态
+            if (selectedCount > 0) {
+                $('#checkoutBtn').removeClass('disabled');
+            } else {
+                $('#checkoutBtn').addClass('disabled');
+            }
+        }
+        
+        // 初始计算总价
+        updateCartSummary();
+        
+        // 全选功能
+        $('#selectAll, #selectAllFooter').on('click', function() {
+            var isChecked = $(this).prop('checked');
+            $('.select-item, #selectAll, #selectAllFooter').prop('checked', isChecked);
+            form.render('checkbox');
+            updateCartSummary();
+        });
+        
+        // 单个商品选择
+        $('.select-item').on('change', function() {
+            // 检查是否所有商品都被选中
+            var allChecked = $('.select-item').length === $('.select-item:checked').length;
+            $('#selectAll, #selectAllFooter').prop('checked', allChecked);
+            form.render('checkbox');
+            updateCartSummary();
+        });
+        
+        // 数量调整 - 增加
+        $('.quantity-btn.plus').on('click', function() {
+            var $input = $(this).siblings('.quantity-input');
+            var currentVal = parseInt($input.val());
+            $input.val(currentVal + 1);
+            
+            // 如果当前商品已选中，更新总价
+            if ($(this).closest('.cart-item').find('.select-item').is(':checked')) {
+                updateCartSummary();
+            }
+        });
+        
+        // 数量调整 - 减少
+        $('.quantity-btn.minus').on('click', function() {
+            var $input = $(this).siblings('.quantity-input');
+            var currentVal = parseInt($input.val());
+            if (currentVal > 1) {
+                $input.val(currentVal - 1);
+                
+                // 如果当前商品已选中，更新总价
+                if ($(this).closest('.cart-item').find('.select-item').is(':checked')) {
+                    updateCartSummary();
+                }
+            }
+        });
+        
+        // 手动输入数量
+        $('.quantity-input').on('blur', function() {
+            var val = parseInt($(this).val()) || 1;
+            if (val < 1) val = 1;
+            $(this).val(val);
+            
+            // 如果当前商品已选中，更新总价
+            if ($(this).closest('.cart-item').find('.select-item').is(':checked')) {
+                updateCartSummary();
+            }
+        });
+        
+        // 删除单个商品
+        $('.delete-btn').on('click', function() {
+            var $item = $(this).closest('.cart-item');
+            var goodsName = $item.find('.goods-name').text();
+            
+            layer.confirm('确定要删除 "' + goodsName + '" 吗？', {
+                title: '删除确认',
+                btn: ['确认', '取消']
+            }, function(index) {
+                $item.remove();
+                layer.close(index);
+                
+                // 检查是否还有商品
+                if ($('.cart-item').length === 0) {
+                    $('.cart-list').html(`
+                        <div class="empty-cart">
+                            <div class="icon layui-icon"></div>
+                            <div class="text">您的购物车是空的</div>
+                            <div class="go-shopping">去购物</div>
+                        </div>
+                    `);
+                    // 清空全选
+                    $('#selectAll, #selectAllFooter').prop('checked', false);
+                    form.render('checkbox');
+                }
+                
+                updateCartSummary();
+            });
+        });
+        
+        // 批量删除选中商品
+        $('.delete-all').on('click', function() {
+            var selectedItems = $('.cart-item:has(.select-item:checked)');
+            if (selectedItems.length === 0) {
+                layer.msg('请先选择要删除的商品', {icon: 5});
+                return;
+            }
+            
+            layer.confirm('确定要删除选中的 ' + selectedItems.length + ' 件商品吗？', {
+                title: '批量删除',
+                btn: ['确认', '取消']
+            }, function(index) {
+                selectedItems.remove();
+                layer.close(index);
+                
+                // 检查是否还有商品
+                if ($('.cart-item').length === 0) {
+                    $('.cart-list').html(`
+                        <div class="empty-cart">
+                            <div class="icon layui-icon"></div>
+                            <div class="text">您的购物车是空的</div>
+                            <div class="go-shopping">去购物</div>
+                        </div>
+                    `);
+                    // 清空全选
+                    $('#selectAll, #selectAllFooter').prop('checked', false);
+                    form.render('checkbox');
+                }
+                
+                updateCartSummary();
+            });
+        });
+        
+        // 结算按钮点击事件
+        $('#checkoutBtn').on('click', function() {
+            if (!$(this).hasClass('disabled')) {
+                var selectedCount = parseInt($('#selectedCount').text());
+                var totalPrice = $('#totalPrice').text();
+                
+                layer.confirm('您确定要结算 ' + selectedCount + ' 件商品，合计金额 ¥' + totalPrice + ' 吗？', {
+                    title: '确认结算',
+                    btn: ['去结算', '取消']
+                }, function(index) {
+                    layer.close(index);
+                    layer.msg('正在跳转到结算页面...', {icon: 1});
+                    window.location.href = "form-step.html";
+                });
+            }
+        });
+        
+        // 去购物按钮点击事件
+        $(document).on('click', '.go-shopping', function() {
+            layer.msg('正在跳转到商品列表页面...', {icon: 1});
+           window.location.href = 'welcome-1.html';
+        });
+    });
+</script>
+</body>
+</html>

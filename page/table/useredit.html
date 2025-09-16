@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+        .layuimini-form .layui-form-item {
+            margin-bottom: 15px;
+        }
+        .layui-form-label {
+            width: 120px;
+        }
+        .layui-input-block {
+            margin-left: 150px;
+        }
+        .tip {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <!-- 账单编号（只读，不可修改） -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">用户昵称</label>
+        <div class="layui-input-block">
+            <input type="text" name="billNo" value="" class="layui-input" readonly>
+        </div>
+    </div>
+    
+    <!-- 账单名称 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">用户账号号码</label>
+        <div class="layui-input-block">
+            <input type="text" name="billName" lay-verify="required" lay-reqtext="账号号码不能为空" 
+                   placeholder="请输入账号号码" value="" class="layui-input">
+        </div>
+    </div>
+    
+    <!-- 供应商/客户 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">手机号码</label>
+        <div class="layui-input-block">
+            <input type="text" name="contactUnit" lay-verify="required" lay-reqtext="手机号码不能为空" 
+                   placeholder="请输入手机号码" value="" class="layui-input">
+        </div>
+    </div>
+    
+    <!-- 备注信息 -->
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name))">取消</button>
+        </div>
+    </div>
+</div>
+
+<script src="../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        // 表单验证
+        form.verify({
+            number: function(value){
+                if(value && isNaN(value)){
+                    return '请输入有效的数字';
+                }
+                if(value && (value < 0 || value > 99999999.99)){
+                    return '金额范围应在0-99999999.99之间';
+                }
+            }
+        });
+
+        // 监听提交
+        form.on('submit(saveBtn)', function (data) {
+            // 模拟数据提交
+            var index = layer.load(2);
+            
+            // 模拟异步提交
+            setTimeout(function() {
+                layer.close(index);
+                layer.alert('账单修改成功！', {
+                    title: '操作成功',
+                    icon: 1
+                }, function () {
+                    // 关闭弹出层
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                    // 可以在这里通知父页面刷新数据
+                    parent.location.reload();
+                });
+            }, 800);
+
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

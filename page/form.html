@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>退款申请表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <!-- 表单标题 -->
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <legend>退款申请表</legend>
+        </fieldset>
+
+        <!-- 退款申请核心表单 -->
+        <form class="layui-form" action="" lay-filter="refundForm">
+            <!-- 1. 订单基础信息 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">订单号 <span style="color:red">*</span></label>
+                <div class="layui-input-block">
+                    <input type="text" name="orderNo" lay-verify="required" lay-reqtext="订单号为必填项" 
+                           placeholder="请输入需要退款的订单号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">下单日期 <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="orderDate" id="orderDate" lay-verify="required" 
+                               lay-reqtext="下单日期为必填项" placeholder="XXXX-XX-XX" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">&yen;订单金额(元) <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="orderAmount" lay-verify="required|number" 
+                               lay-reqtext="订单金额为必填项" placeholder="请输入订单总金额" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 退款信息 -->
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">&yen;申请退款金额(元) <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="refundAmount" lay-verify="required|number|refundAmountCheck" 
+                               lay-reqtext="退款金额为必填项" placeholder="请输入申请退款金额" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">退款原因 <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <select name="refundReason" lay-verify="required" lay-reqtext="请选择退款原因">
+                            <option value="">请选择退款原因</option>
+                            <option value="商品质量问题">商品质量问题</option>
+                            <option value="拍错/多拍">拍错/多拍</option>
+                            <option value="商品与描述不符">商品与描述不符</option>
+                            <option value="未收到商品">未收到商品</option>
+                            <option value="七天无理由退货">七天无理由退货</option>
+                            <option value="其他原因">其他原因</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">退款说明(选填)</label>
+                <div class="layui-input-block">
+                    <textarea name="refundDesc" placeholder="请补充退款详情（如商品问题描述、退货物流信息等）" 
+                              class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <!-- 3. 申请人信息 -->
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">申请人姓名 <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="applicantName" lay-verify="required" 
+                               lay-reqtext="申请人姓名为必填项" placeholder="请输入申请人姓名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">联系电话 <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="applicantPhone" lay-verify="required|phone" 
+                               lay-reqtext="联系电话为必填项" placeholder="请输入申请人手机号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 退款账户信息 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">退款账户类型 <span style="color:red">*</span></label>
+                <div class="layui-input-block">
+                    <input type="radio" name="accountType" value="微信" title="微信" checked>
+                    <input type="radio" name="accountType" value="支付宝" title="支付宝">
+                    <input type="radio" name="accountType" value="银行卡" title="银行卡">
+                </div>
+            </div>
+
+            <div class="layui-form-item" id="wechatAccount" style="display:block;">
+                <label class="layui-form-label">微信账号 <span style="color:red">*</span></label>
+                <div class="layui-input-block">
+                    <input type="text" name="wechatNo" lay-verify="required" 
+                           lay-reqtext="微信账号为必填项" placeholder="请输入微信昵称/手机号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item" id="alipayAccount" style="display:none;">
+                <label class="layui-form-label">支付宝账号 <span style="color:red">*</span></label>
+                <div class="layui-input-block">
+                    <input type="text" name="alipayNo" lay-verify="required|accountCheck" 
+                           lay-reqtext="支付宝账号为必填项" placeholder="请输入支付宝手机号/邮箱" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item" id="bankAccount" style="display:none;">
+                <div class="layui-inline">
+                    <label class="layui-form-label">银行卡号 <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="bankCardNo" lay-verify="required|number" 
+                               lay-reqtext="银行卡号为必填项" placeholder="请输入银行卡号" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">开户银行 <span style="color:red">*</span></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="bankName" lay-verify="required" 
+                               lay-reqtext="开户银行为必填项" placeholder="如：中国工商银行" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 提交按钮 -->
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="submitRefund">提交退款申请</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置申请</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'laydate', 'layer'], function () {
+        var form = layui.form
+            , laydate = layui.laydate
+            , layer = layui.layer
+            , $ = layui.jquery;
+
+        // 1. 初始化日期选择器
+        laydate.render({
+            elem: '#orderDate'
+            , format: 'yyyy-MM-dd'
+            , max: laydate.now() // 禁止选择未来日期
+        });
+
+        // 2. 监听退款账户类型切换（显示对应账户输入框）
+        form.on('radio(accountType)', function (data) {
+            var type = data.value;
+            $('#wechatAccount, #alipayAccount, #bankAccount').hide();
+            if (type === '微信') {
+                $('#wechatAccount').show();
+                $('input[name="wechatNo"]').attr('lay-verify', 'required');
+                $('input[name="alipayNo"], input[name="bankCardNo"], input[name="bankName"]').removeAttr('lay-verify');
+            } else if (type === '支付宝') {
+                $('#alipayAccount').show();
+                $('input[name="alipayNo"]').attr('lay-verify', 'required|accountCheck');
+                $('input[name="wechatNo"], input[name="bankCardNo"], input[name="bankName"]').removeAttr('lay-verify');
+            } else if (type === '银行卡') {
+                $('#bankAccount').show();
+                $('input[name="bankCardNo"]').attr('lay-verify', 'required|number');
+                $('input[name="bankName"]').attr('lay-verify', 'required');
+                $('input[name="wechatNo"], input[name="alipayNo"]').removeAttr('lay-verify');
+            }
+            form.render(); // 重新渲染表单验证规则
+        });
+
+        // 3. 自定义验证规则
+        form.verify({
+            // 退款金额不能超过订单金额
+            refundAmountCheck: function (value) {
+                var orderAmount = $('input[name="orderAmount"]').val();
+                if (orderAmount && parseFloat(value) > parseFloat(orderAmount)) {
+                    return '退款金额不能超过订单金额';
+                }
+                if (parseFloat(value) <= 0) {
+                    return '退款金额必须大于0';
+                }
+            },
+            // 支付宝账号格式（手机号/邮箱）
+            accountCheck: function (value) {
+                var phoneReg = /^1[3-9]\d{9}$/;
+                var emailReg = /^[\w.-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+$/;
+                if (!phoneReg.test(value) && !emailReg.test(value)) {
+                    return '请输入正确的手机号或邮箱';
+                }
+            }
+        });
+
+        // 4. 监听表单提交
+        form.on('submit(submitRefund)', function (data) {
+            // 模拟提交成功（实际项目中替换为接口请求）
+            layer.confirm('确认提交退款申请？', {
+                title: '提交确认',
+                btn: ['确认提交', '取消']
+            }, function (index) {
+                layer.close(index);
+                layer.msg('退款申请提交成功！', {
+                    icon: 1,
+                    time: 1500
+                }, function () {
+                    // 提交成功后的操作（如重置表单、跳转页面）
+                    $('form[lay-filter="refundForm"]')[0].reset();
+                });
+            });
+            return false; // 阻止默认表单提交
+        });
+
+        // 5. 初始化表单渲染
+        form.render();
+    });
+</script>
+</body>
+</html>

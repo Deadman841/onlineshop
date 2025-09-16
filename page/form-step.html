@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>选择支付方式</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <link rel="stylesheet" href="../js/lay-module/step-lay/step.css" media="all">
+    <style>
+        .payment-method {
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .payment-method:hover {
+            border-color: #1E9FFF;
+            background-color: #f5faff;
+        }
+        .payment-method.selected {
+            border-color: #1E9FFF;
+            background-color: #f5faff;
+        }
+        .payment-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .payment-info h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .payment-info p {
+            font-size: 12px;
+            color: #666;
+        }
+        .wechat-icon {
+            color: #07C160;
+            font-size: 32px;
+        }
+        .alipay-icon {
+            color: #1677FF;
+            font-size: 32px;
+        }
+        .bank-icon {
+            color: #FAAD14;
+            font-size: 32px;
+        }
+        .security-tip {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #52c41a;
+        }
+        .security-tip i {
+            margin-right: 5px;
+        }
+        .bank-card {
+            border: 1px solid #e6e6e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #4361ee, #3a0ca3);
+        }
+        .card-number {
+            letter-spacing: 2px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-fluid">
+            <div class="layui-card">
+                <div class="layui-card-body" style="padding-top: 40px;">
+                    <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+                        <div carousel-item>
+                            <!-- 第一步：选择支付方式 -->
+                            <div>
+                                <form class="layui-form" style="margin: 0 auto;max-width: 560px;padding-top: 20px;">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">订单信息:</label>
+                                        <div class="layui-input-block">
+                                            <div class="layui-form-mid layui-word-aux">订单编号: <span id="orderNo">ORD20250914001</span></div>
+                                            <div class="layui-form-mid layui-word-aux">应付金额: <span style="color: #FF5722;font-weight: bold;">&yen;299.00</span></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label required">支付方式:</label>
+                                        <div class="layui-input-block">
+                                            <!-- 微信支付 -->
+                                            <div class="payment-method" data-method="wechat">
+                                                <div class="payment-icon">
+                                                    <i class="fa fa-weixin wechat-icon"></i>
+                                                </div>
+                                                <div class="payment-info">
+                                                    <h3>微信支付</h3>
+                                                    <p>支持微信零钱、绑定银行卡支付，享指纹/面容安全验证</p>
+                                                </div>
+                                                <div class="layui-unselect layui-form-radio" style="margin-left: auto;">
+                                                    <i class="layui-anim layui-icon"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- 支付宝支付 -->
+                                            <div class="payment-method" data-method="alipay">
+                                                <div class="payment-icon">
+                                                    <i class="fa fa-credit-card alipay-icon"></i>
+                                                </div>
+                                                <div class="payment-info">
+                                                    <h3>支付宝支付</h3>
+                                                    <p>支持支付宝余额、绑定银行卡支付，享刷脸支付安全验证</p>
+                                                </div>
+                                                <div class="layui-unselect layui-form-radio" style="margin-left: auto;">
+                                                    <i class="layui-anim layui-icon"></i>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- 银行卡支付 -->
+                                            <div class="payment-method" data-method="bank">
+                                                <div class="payment-icon">
+                                                    <i class="fa fa-university bank-icon"></i>
+                                                </div>
+                                                <div class="payment-info">
+                                                    <h3>银行卡支付</h3>
+                                                    <p>支持各大银行储蓄卡、信用卡，需验证支付密码和短信验证码</p>
+                                                </div>
+                                                <div class="layui-unselect layui-form-radio" style="margin-left: auto;">
+                                                    <i class="layui-anim layui-icon"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="security-tip">
+                                        <i class="fa fa-shield"></i>
+                                        <span>系统采用多重安全验证机制，保障您的资金安全</span>
+                                    </div>
+                                    
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" lay-submit lay-filter="formStep" id="nextStepBtn" disabled>
+                                                &emsp;下一步&emsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- 第二步：支付验证（根据选择的支付方式动态显示） -->
+                            <div>
+                                <form class="layui-form" style="margin: 0 auto;max-width: 560px;padding-top: 20px;">
+                                    <div id="wechatPayment" class="payment-form" style="display: none;">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">微信支付:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-form-mid">
+                                                    <img src="https://picsum.photos/200/200?text=微信支付二维码" alt="微信支付二维码" style="max-width: 200px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">支付金额:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-form-mid layui-word-aux" style="color: #FF5722;font-weight: bold;">&yen;299.00</div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">安全验证:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-form-mid layui-word-aux">请在微信中完成指纹/面容验证支付</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="alipayPayment" class="payment-form" style="display: none;">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">支付宝支付:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-form-mid">
+                                                    <img src="https://picsum.photos/200/200?text=支付宝二维码" alt="支付宝支付二维码" style="max-width: 200px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">支付金额:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-form-mid layui-word-aux" style="color: #FF5722;font-weight: bold;">&yen;299.00</div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">安全验证:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-form-mid layui-word-aux">请在支付宝中完成刷脸/指纹验证支付</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="bankPayment" class="payment-form" style="display: none;">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">选择银行卡:</label>
+                                            <div class="layui-input-block">
+                                                <div class="bank-card">
+                                                    <div>招商银行(储蓄卡)</div>
+                                                    <div class="card-number">**** **** **** 5678</div>
+                                                    <div class="card-info">
+                                                        <div>持卡人: 张三</div>
+                                                        <div>有效期: 长期</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label required">支付金额:</label>
+                                            <div class="layui-input-block">
+                                                <input type="text" value="&yen;299.00" class="layui-input" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label required">支付密码:</label>
+                                            <div class="layui-input-block">
+                                                <input type="password" placeholder="请输入6位数字支付密码" class="layui-input" lay-verify="required|number" minlength="6" maxlength="6">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label required">短信验证码:</label>
+                                            <div class="layui-input-block">
+                                                <div class="layui-input-inline" style="width: 60%;">
+                                                    <input type="text" placeholder="请输入验证码" class="layui-input" lay-verify="required|number">
+                                                </div>
+                                                <button type="button" class="layui-btn layui-btn-primary" id="sendCode">获取验证码</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="security-tip">
+                                        <i class="fa fa-lock"></i>
+                                        <span>正在进行安全验证，保护您的账户安全</span>
+                                    </div>
+                                    
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button type="button" class="layui-btn layui-btn-primary pre">上一步</button>
+                                            <button class="layui-btn" lay-submit lay-filter="formStep2">
+                                                &emsp;确认支付&emsp;
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- 第三步：支付结果 -->
+                            <div>
+                                <div style="text-align: center;margin-top: 60px;">
+                                    <i class="layui-icon layui-circle"
+                                       style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+                                    <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+                                        支付成功
+                                    </div>
+                                    <div style="font-size: 14px;color: #666;margin-top: 10px;">订单编号: ORD20250914001</div>
+                                    <div style="font-size: 16px;color: #FF5722;margin-top: 10px;font-weight: bold;">支付金额: &yen;299.00</div>
+                                    <div style="font-size: 14px;color: #666;margin-top: 10px;">支付方式: <span id="paymentMethodText">微信支付</span></div>
+                                    <div style="font-size: 14px;color: #666;margin-top: 5px;">支付时间: <span id="paymentTime"></span></div>
+                                </div>
+                                
+                                <div class="security-tip" style="max-width: 560px;margin: 30px auto;">
+                                    <i class="fa fa-check-circle"></i>
+                                    <span>支付已完成安全验证，资金交易安全可靠</span>
+                                </div>
+                                
+                                <div style="text-align: center;margin-top: 20px;">
+                                    <button class="layui-btn next">返回首页</button>
+                                    <button class="layui-btn layui-btn-primary">查看订单详情</button>
+				
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <div style="color: #666;margin-top: 30px;margin-bottom: 40px;padding-left: 30px;">
+                        <h3>支付安全说明</h3><br>
+                        <p>1. 系统集成微信支付、支付宝支付、银行卡支付三种主流方式，用户下单时可自由选择，支付页面按对应平台标准样式呈现，确保操作熟悉度。</p>
+                        <br>
+                        <p>2. 支付时启用多重安全验证，包括用户账号登录态验证、支付密码/验证码验证（银行卡支付）、平台风控验证（如微信支付的指纹/面容验证），防止盗刷、误支付。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'step', 'layer'], function () {
+        var $ = layui.$,
+            form = layui.form,
+            step = layui.step,
+            layer = layui.layer;
+
+        // 当前选择的支付方式
+        var selectedMethod = '';
+        
+        // 渲染步骤条
+        step.render({
+            elem: '#stepForm',
+            filter: 'stepForm',
+            width: '100%',
+            stepWidth: '750px',
+            height: '500px',
+            stepItems: [
+                { title: '选择支付方式' },
+                { title: '确认支付信息' },
+                { title: '支付完成' }
+            ]
+        });
+
+        // 支付方式选择
+        $('.payment-method').click(function() {
+            // 移除其他选中状态
+            $('.payment-method').removeClass('selected');
+            $('.payment-method .layui-form-radio').removeClass('layui-form-radioed');
+            $('.payment-method .layui-form-radio i').html('');
+            
+            // 设置当前选中状态
+            $(this).addClass('selected');
+            $(this).find('.layui-form-radio').addClass('layui-form-radioed');
+            $(this).find('.layui-form-radio i').html('');
+            
+            // 记录选中的支付方式
+            selectedMethod = $(this).data('method');
+            
+            // 启用下一步按钮
+            $('#nextStepBtn').removeAttr('disabled');
+        });
+
+        // 第一步提交，进入支付验证
+        form.on('submit(formStep)', function (data) {
+            if (!selectedMethod) {
+                layer.msg('请选择支付方式', { icon: 2 });
+                return false;
+            }
+            
+            // 隐藏所有支付表单，显示选中的支付方式表单
+            $('.payment-form').hide();
+            $('#' + selectedMethod + 'Payment').show();
+            
+            step.next('#stepForm');
+            return false;
+        });
+
+        // 第二步提交，完成支付
+        form.on('submit(formStep2)', function (data) {
+            // 模拟支付过程
+            var index = layer.load(2);
+            
+            setTimeout(function() {
+                layer.close(index);
+                
+                // 更新支付结果页面信息
+                var methodText = '';
+                switch(selectedMethod) {
+                    case 'wechat':
+                        methodText = '微信支付';
+                        break;
+                    case 'alipay':
+                        methodText = '支付宝支付';
+                        break;
+                    case 'bank':
+                        methodText = '银行卡支付';
+                        break;
+                }
+                $('#paymentMethodText').text(methodText);
+                
+                // 设置当前时间
+                var now = new Date();
+                var timeStr = now.getFullYear() + '-' + 
+                              (now.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                              now.getDate().toString().padStart(2, '0') + ' ' + 
+                              now.getHours().toString().padStart(2, '0') + ':' + 
+                              now.getMinutes().toString().padStart(2, '0') + ':' + 
+                              now.getSeconds().toString().padStart(2, '0');
+                $('#paymentTime').text(timeStr);
+                
+                step.next('#stepForm');
+            }, 1500);
+            
+            return false;
+        });
+
+        // 上一步按钮
+        $('.pre').click(function () {
+            step.pre('#stepForm');
+        });
+
+        // 下一步/返回首页按钮
+        $('.next').click(function () {
+            // 如果是最后一步，点击返回首页
+            if ($('#stepForm').find('.layui-carousel-item').eq(2).hasClass('layui-this')) {
+                layer.msg('即将返回首页', { icon: 1 });
+                // 实际应用中这里可以跳转到首页
+                setTimeout(function() {
+                    step.to('#stepForm', 0);
+                    // 重置选择状态
+                    $('.payment-method').removeClass('selected');
+                    $('.payment-method .layui-form-radio').removeClass('layui-form-radioed');
+                    $('.payment-method .layui-form-radio i').html('');
+                    selectedMethod = '';
+                    $('#nextStepBtn').attr('disabled', 'disabled');
+                }, 1000);
+            } else {
+                step.next('#stepForm');
+            }
+        });
+
+        // 发送验证码
+        $('#sendCode').click(function() {
+            var $this = $(this);
+            if ($this.hasClass('layui-btn-disabled')) return;
+            
+            // 模拟发送验证码倒计时
+            var count = 60;
+            $this.addClass('layui-btn-disabled').text(count + 's后重发');
+            
+            var timer = setInterval(function() {
+                count--;
+                $this.text(count + 's后重发');
+                
+                if (count <= 0) {
+                    clearInterval(timer);
+                    $this.removeClass('layui-btn-disabled').text('获取验证码');
+                    layer.msg('验证码已发送，请注意查收', { icon: 1 });
+                }
+            }, 1000);
+        });
+    });
+</script>
+</body>
+</html>

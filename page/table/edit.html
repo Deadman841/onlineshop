@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改账单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+        .layuimini-form .layui-form-item {
+            margin-bottom: 15px;
+        }
+        .layui-form-label {
+            width: 120px;
+        }
+        .layui-input-block {
+            margin-left: 150px;
+        }
+        .tip {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <!-- 账单编号（只读，不可修改） -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账单编号</label>
+        <div class="layui-input-block">
+            <input type="text" name="billNo" value="" class="layui-input" readonly>
+            <tip>系统自动生成，唯一标识</tip>
+        </div>
+    </div>
+    
+    <!-- 账单名称 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账单名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="billName" lay-verify="required" lay-reqtext="账单名称不能为空" 
+                   placeholder="请输入账单名称" value="" class="layui-input">
+            <tip>填写该账单的简要说明</tip>
+        </div>
+    </div>
+    
+    <!-- 账单金额 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账单金额</label>
+        <div class="layui-input-block">
+            <input type="number" name="amount" lay-verify="required|number" lay-reqtext="金额不能为空" 
+                   placeholder="请输入金额" value="" class="layui-input">
+            <tip>账单总金额，精确到小数点后两位</tip>
+        </div>
+    </div>
+    
+    <!-- 账单日期 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账单日期</label>
+        <div class="layui-input-block">
+            <input type="date" name="billDate" lay-verify="required" lay-reqtext="账单日期不能为空" 
+                   value="" class="layui-input">
+        </div>
+    </div>
+    
+    <!-- 账单类型 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">账单类型</label>
+        <div class="layui-input-block">
+            <select name="billType" lay-verify="required" lay-reqtext="请选择账单类型">
+                <option value="">请选择</option>
+                <option value="purchase" selected>采购支出</option>
+                <option value="sale">销售收入</option>
+                <option value="service">服务费用</option>
+                <option value="salary">薪资支出</option>
+                <option value="other">其他</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- 支付状态 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">支付状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="payStatus" value="unpaid" title="未支付">
+            <input type="radio" name="payStatus" value="paid" title="已支付" checked>
+            <input type="radio" name="payStatus" value="part" title="部分支付">
+        </div>
+    </div>
+    
+    <!-- 支付方式 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label">支付方式</label>
+        <div class="layui-input-block">
+            <select name="payMethod">
+                <option value="">请选择</option>
+                <option value="wechat">微信支付</option>
+                <option value="alipay" selected>支付宝</option>
+                <option value="bank">银行转账</option>
+                <option value="cash">现金支付</option>
+                <option value="other">其他</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- 供应商/客户 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">往来单位</label>
+        <div class="layui-input-block">
+            <input type="text" name="contactUnit" lay-verify="required" lay-reqtext="往来单位不能为空" 
+                   placeholder="请输入供应商或客户名称" value="" class="layui-input">
+        </div>
+    </div>
+    
+    <!-- 联系人及电话 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系人</label>
+        <div class="layui-input-block">
+            <input type="text" name="contactPerson" placeholder="请输入联系人" value="" class="layui-input">
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">联系电话</label>
+        <div class="layui-input-block">
+            <input type="tel" name="contactPhone" placeholder="请输入联系电话" value="" class="layui-input">
+        </div>
+    </div>
+    
+    <!-- 备注信息 -->
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">备注信息</label>
+        <div class="layui-input-block">
+            <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+            <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name))">取消</button>
+        </div>
+    </div>
+</div>
+
+<script src="../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        // 表单验证
+        form.verify({
+            number: function(value){
+                if(value && isNaN(value)){
+                    return '请输入有效的数字';
+                }
+                if(value && (value < 0 || value > 99999999.99)){
+                    return '金额范围应在0-99999999.99之间';
+                }
+            }
+        });
+
+        // 监听提交
+        form.on('submit(saveBtn)', function (data) {
+            // 模拟数据提交
+            var index = layer.load(2);
+            
+            // 模拟异步提交
+            setTimeout(function() {
+                layer.close(index);
+                layer.alert('账单修改成功！', {
+                    title: '操作成功',
+                    icon: 1
+                }, function () {
+                    // 关闭弹出层
+                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(iframeIndex);
+                    // 可以在这里通知父页面刷新数据
+                    parent.location.reload();
+                });
+            }, 800);
+
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>
