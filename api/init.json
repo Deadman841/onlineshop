@@ -1,0 +1,171 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/welcome-1.html?t=1"
+  },
+  "logoInfo": {
+    "title": "小喵shopping",
+    "image": "img/3.jpg",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "商品查询",
+          "href": "",
+          "icon": "fa fa-cubes",
+          "target": "_self",
+          "child": [
+            {
+              "title": "男装",
+              "href": "page/manshopping.html",
+              "icon": "fa fa-male",
+              "target": "_self"
+            },
+            {
+              "title": "女装",
+              "href": "page/womanshopping.html",
+              "icon": "fa fa-female",
+              "target": "_self"
+            },
+            {
+              "title": "儿童",
+              "href": "page/childshopping.html",
+              "icon": "fa fa-child",
+              "target": "_self"
+            },
+            {
+              "title": "数码",
+              "href": "page/elshopping.html",
+              "icon": "fa fa-mobile",
+              "target": "_self"
+            },
+            {
+              "title": "食饮百货",
+              "href": "page/foodshopping.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "鞋类",
+              "href": "page/shoseshopping.html",
+              "icon": "fa fa-tree",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "用户管理",
+          "href": "page/usertable.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
+        {
+          "title": "购物车管理",
+          "href": "page/itmform.html",
+          "icon": "fa fa-cart-plus",
+          "target": "_self",
+          "child": [
+            {
+              "title": "添加商品",
+              "href": "page/itmform.html",
+              "icon": "fa fa-cubes  ",
+              "target": "_self"
+            },
+            {
+              "title": "删除商品",
+              "href": "page/itmform.html",
+              "icon": "fa fa-cube",
+              "target": "_self"
+            },
+            {
+              "title": "选择商品结算",
+              "href": "page/itmform.html",
+              "icon": "fa fa-check-square-o",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "订单管理",
+          "href": "page/table.html",
+          "icon": "fa fa-file-text",
+          "target": "_self",
+          "child": [
+            {
+              "title": "订单中心",
+              "href": "page/table.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "订单状态查询",
+              "href": "page/checked.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "订单退款申请",
+              "href": "page/form.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "收货系统",
+          "href": "",
+          "icon": "fa fa-bell-o",
+          "target": "_self",
+          "child": [
+            {
+              "title": "收货地址管理",
+              "href": "page/adstable.html",
+              "icon": "fa fa-desktop",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "支付管理",
+          "href": "",
+          "icon": "fa fa-jpy",
+          "target": "_self",
+          "child": [
+            {
+              "title": "支付方式",
+              "href": "page/form-step.html",
+              "icon": "fa fa-credit-card",
+              "target": "_blank"
+            },
+            {
+              "title": "支付安全验证",
+              "href": "page/form-step.html",
+              "icon": "fa fa-cc-paypal",
+              "target": "_blank"
+            }
+          ]
+        },
+        {
+          "title": "物流管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "物流状态查询",
+              "href": "page/logistics.html",
+              "icon": "fa fa-truck",
+              "target": "_self"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
